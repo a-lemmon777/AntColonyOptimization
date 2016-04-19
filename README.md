@@ -1,6 +1,6 @@
 # AntColonyOptimization
 
-An implementation of the Ant Colony Optimization. There is an ant hill and various food sources outside of the ant hill. The goal for the ants is to find the sources of food and deplete the sources. Ants leave pheromones wherever they go, so other the ants can follow each other.
+An implementation of the Ant Colony Optimization. There is an ant hill and various food sources outside of the ant hill. The goal for the ants is to find the sources of food and deplete the sources. Ants leave pheromones wherever they go, so other the ants can follow each other. The run is considered successful if all of the food is eventually eaten.
 
 An ant: an object with...
 * a location: (x, y) coordinate
@@ -18,9 +18,18 @@ Other:
 * an ant, when going to find food, will follow findFood pheremones and leave a set number of findHill pheromones
 * an ant, when going to find an ant hill, will follow findHill pheromones and leave a set number of findFood pheromones
   * this could possibly prevent ants from following their own pheromones and getting stuck in circles
-* after every move, each location object will have its pheromones deplete by one for each type of pheromone; this ensures that pheromones get lost after a while
+* after every move, each location object will have its pheromones deplete (either by one or by a half-life formula) for each type of pheromone; this ensures that pheromones get lost after a while
 * to determine each move, an ant will look around at all neighboring spaces and see what the pheromone counts (for what their following) is on each spot; it will then go to the spot that has the highest pheromone count; this ensures that paths that are often followed are continually followed again
 * two loops should be used to do a move:
   * one where each ant's location's pheromones are updated
   * one where each ant looks to and decides where to move; then moves
 * when an ant gets to a food source, then its state switches, its pheromones switch, and it attempts to go back to the ant hill
+
+Different parameters that might affect performance:
+* number of ants in a run
+* how many generations (steps) the ants have to try to get all of the food
+* the number of food sources and ant hills
+* the amount that the pheromones are depleted by each step
+* the size of the world in an x's and y's
+* maybe if barriers are put into the world
+
