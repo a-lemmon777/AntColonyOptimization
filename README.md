@@ -2,6 +2,12 @@
 
 An implementation of the Ant Colony Optimization. There is an ant hill and various food sources outside of the ant hill. The goal for the ants is to find the sources of food and deplete the sources. Ants leave pheromones wherever they go, so other the ants can follow each other. The run is considered successful if all of the food is eventually eaten.
 
+## Running Our Code
+
+We've been running this `.txt` code through [this website](http://www.netlogoweb.org/launch#http://www.netlogoweb.org/assets/modelslib/Sample%20Models/Biology/Ants.nlogo) by copy-pasting the text file into where this link says NetLogo Code, and then recompiling. This was the easiest way we found to run this, instead of somehow compiling it ourselves and then uploading a file.
+
+## Our Implementation of Ant Colony Optimization
+
 An ant: an object with...
 * a location: (x, y) coordinate
 * a state: going to food or going back to ant hill (boolean)
@@ -33,4 +39,3 @@ Different parameters that might affect performance:
 * the amount that the pheromones are depleted by each step
 * the size of the world in a x's and y's (width and height of the world)
 * maybe if barriers are put into the world
-
