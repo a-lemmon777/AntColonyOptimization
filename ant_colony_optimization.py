@@ -1,10 +1,10 @@
 ;; Taken and modified from Uri Wilensky's 1997 Ant Colony Optimization NetLogo code.
 
 globals [
-	find-food-diffusion
-	find-food-evaporation
-	find-hill-diffusion
-	find-hill-evaporation
+	find-food-diffusion   ;; amount of diffusion for find-food-pheromone
+	find-food-evaporation ;; amount of evaporation for find-food-pheromone
+	find-hill-diffusion   ;; amount of diffusion for find-hill-pheromone
+	find-hill-evaporation ;; amount of evaporation for find-hill-pheromone
 ]
 
 patches-own [
@@ -97,16 +97,16 @@ to go  ;; forever button
 		[ return-to-hill ]       ;; carrying food? take it back to hill
 		wiggle
 		fd 1 ]
-	diffuse find-food-pheromone (find-food-diffusion / 100)
-	diffuse find-hill-pheromone (find-hill-diffusion / 100)
+	diffuse find-food-pheromone (find-food-diffusion / 100) ;; slowly diffuse find-food-pheromone
+	diffuse find-hill-pheromone (find-hill-diffusion / 100) ;; slowly diffuse find-hill-pheromone
 	ask patches
 	[ set find-food-pheromone find-food-pheromone * (100 - find-food-evaporation) / 100  ;; slowly evaporate find-food-pheromone
-		set find-hill-pheromone find-hill-pheromone * (100 - find-hill-evaporation) / 100  ;; slowly evaporate find-food-pheromone
+		set find-hill-pheromone find-hill-pheromone * (100 - find-hill-evaporation) / 100  ;; slowly evaporate find-hill-pheromone
 		recolor-patch ]
 	tick
 end
 
-to return-to-hill  ;; turtle procedure
+to return-to-hill
 	ifelse hill?
 	[ ;; drop food and head out again
 		set color red
@@ -115,7 +115,7 @@ to return-to-hill  ;; turtle procedure
 		uphill-hill-scent ]         ;; head toward the greatest value of hill-scent
 end
 
-to look-for-food  ;; turtle procedure
+to look-for-food
 	ifelse food > 0
 	[ set color brown + 1      ;; pick up food
 		set food food - 1        ;; and reduce the food source
@@ -139,7 +139,7 @@ to uphill-food-pheromone  ;; turtle procedure
 end
 
 ;; sniff left and right, and go where the strongest smell is
-to uphill-hill-scent  ;; turtle procedure
+to uphill-hill-scent
 	let scent-ahead hill-scent-at-angle   0
 	let scent-right hill-scent-at-angle  45
 	let scent-left  hill-scent-at-angle -45
@@ -149,7 +149,7 @@ to uphill-hill-scent  ;; turtle procedure
 		[ lt 45 ] ]
 end
 
-to wiggle  ;; turtle procedure
+to wiggle
 	rt random 40
 	lt random 40
 	if not can-move? 1 [ rt 180 ]
