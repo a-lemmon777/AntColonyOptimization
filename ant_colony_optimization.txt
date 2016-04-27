@@ -1,7 +1,15 @@
 ;; Taken and modified from Uri Wilensky's 1997 Ant Colony Optimization NetLogo code.
 
+globals [
+	find-food-diffusion
+	find-food-evaporation
+	find-hill-diffusion
+	find-hill-evaporation
+]
+
 patches-own [
-  pheromone            ;; amount of pheromone on this patch
+  find-food-pheromone  ;; amount of find-food-pheromone on this patch
+	find-hill-pheromone  ;; amount of find-hill-pheromone on this patch
   food                 ;; amount of food on this patch
   hill?                ;; true on hill patches, false elsewhere
   hill-scent           ;; number that is higher closer to the hill
@@ -14,11 +22,16 @@ patches-own [
 
 to setup
   clear-all
-  set-default-shape turtles "ant"
+  set-default-shape turtles "bug"
   create-turtles population
   [ set size 2
     set color red  ]   ;; red = not carrying food and brown = carrying food
   setup-patches
+	;; Change the diffusion and evaporation rates for everything HERE:
+	set find-food-diffusion 20
+	set find-food-evaporation 8
+	set find-hill-diffusion 1
+	set find-hill-evaporation 8
   reset-ticks
 end
 
@@ -44,10 +57,10 @@ to setup-food ;; make 4 set food sources
   if (distancexy (0.6 * max-pxcor) (-0.1 * max-pycor)) < 3
   [ set food-source-number 1 ]
 
-  if (distancexy (0.3 * max-pxcor) (-0.5 * max-pycor)) < 3
+  if (distancexy (0.4 * max-pxcor) (-0.9 * max-pycor)) < 3
   [ set food-source-number 2 ]
 
-  if (distancexy (-0.3 * max-pxcor) (-0.4 * max-pycor)) < 3
+  if (distancexy (0.2 * max-pxcor) (0.75 * max-pycor)) < 3
   [ set food-source-number 3 ]
 
   if (distancexy (-0.9 * max-pxcor) (0.7 * max-pycor)) < 3
@@ -66,8 +79,10 @@ to recolor-patch
       if food-source-number = 2 [ set pcolor sky  ]
       if food-source-number = 3 [ set pcolor blue ]
       if food-source-number = 4 [ set pcolor yellow ] ]
-    ;; scale color to show pheromone concentration
-    [ set pcolor scale-color green pheromone 0.1 5 ] ]
+    ;; scale color to show find-food-pheromone concentration
+    [ ifelse find-hill-pheromone > find-food-pheromone
+			[ set pcolor scale-color green find-hill-pheromone 0.1 5 ]
+		  [ set pcolor scale-color orange find-food-pheromone 0.1 5 ] ] ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -82,9 +97,11 @@ to go  ;; forever button
     [ return-to-hill ]       ;; carrying food? take it back to hill
     wiggle
     fd 1 ]
-  diffuse pheromone (diffusion-rate / 100)
+  diffuse find-food-pheromone (find-food-diffusion / 100)
+	diffuse find-hill-pheromone (find-hill-diffusion / 100)
   ask patches
-  [ set pheromone pheromone * (100 - evaporation-rate) / 100  ;; slowly evaporate pheromone
+  [ set find-food-pheromone find-food-pheromone * (100 - find-food-evaporation) / 100  ;; slowly evaporate find-food-pheromone
+		set find-hill-pheromone find-hill-pheromone * (100 - find-hill-evaporation) / 100  ;; slowly evaporate find-food-pheromone
     recolor-patch ]
   tick
 end
@@ -94,26 +111,27 @@ to return-to-hill  ;; turtle procedure
   [ ;; drop food and head out again
     set color red
     rt 180 ]
-  [ set pheromone pheromone + 60  ;; drop some pheromone
+  [ set find-food-pheromone find-food-pheromone + 60  ;; drop some find-food-pheromone
     uphill-hill-scent ]         ;; head toward the greatest value of hill-scent
 end
 
 to look-for-food  ;; turtle procedure
-  if food > 0
+  ifelse food > 0
   [ set color brown + 1      ;; pick up food
     set food food - 1        ;; and reduce the food source
     rt 180                   ;; and turn around
     stop ]
-  ;; go in the direction where the pheromone smell is strongest
-  if (pheromone >= 0.05) and (pheromone < 2)
-  [ uphill-pheromone ]
+  ;; go in the direction where the find-food-pheromone smell is strongest
+  [ set find-hill-pheromone find-hill-pheromone + 60 ;; drop some find-hill-pheromone
+		if (find-food-pheromone >= 0.05) and (find-food-pheromone < 2)  
+			[ uphill-food-pheromone ] ]
 end
 
 ;; sniff left and right, and go where the strongest smell is
-to uphill-pheromone  ;; turtle procedure
-  let scent-ahead pheromone-scent-at-angle   0
-  let scent-right pheromone-scent-at-angle  45
-  let scent-left  pheromone-scent-at-angle -45
+to uphill-food-pheromone  ;; turtle procedure
+  let scent-ahead food-pheromone-scent-at-angle   0
+  let scent-right food-pheromone-scent-at-angle  45
+  let scent-left  food-pheromone-scent-at-angle -45
   if (scent-right > scent-ahead) or (scent-left > scent-ahead)
   [ ifelse scent-right > scent-left
     [ rt 45 ]
@@ -143,8 +161,15 @@ to-report hill-scent-at-angle [angle]
   report [hill-scent] of p
 end
 
-to-report pheromone-scent-at-angle [angle]
+to-report food-pheromone-scent-at-angle [angle]
   let p patch-right-and-ahead angle 1
   if p = nobody [ report 0 ]
-  report [pheromone] of p
+  report [find-food-pheromone] of p
 end
+
+to-report hill-pheromone-scent-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [ report 0 ]
+  report [find-hill-pheromone] of p
+end
+
