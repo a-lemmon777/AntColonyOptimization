@@ -35,7 +35,7 @@ to setup
   ;; Change the diffusion and evaporation rates for everything HERE:
   set find-food-diffusion 20
   set find-food-evaporation 8
-  set find-hill-diffusion 1
+  set find-hill-diffusion 20
   set find-hill-evaporation 8
   set default-pheromone-strength 60
   reset-ticks
@@ -95,9 +95,11 @@ end
 to go  ;; forever button
   ask turtles
     [ if who >= ticks [ stop ] ;; delay initial departure
+      if hill? or (food > 0)
+        [ set pheromone-strength default-pheromone-strength ]
       ifelse color = red
-        [ look-for-food  ]       ;; not carrying food? look for it
-        [ return-to-hill ]       ;; carrying food? take it back to hill
+        [ red-procedure  ]       ;; not carrying food? look for it
+        [ brown-procedure ]      ;; carrying food? take it back to hill
       wiggle
       fd 1 ]
   diffuse find-food-pheromone (find-food-diffusion / 100) ;; slowly diffuse find-food-pheromone
@@ -109,28 +111,28 @@ to go  ;; forever button
   tick
 end
 
-to return-to-hill
+to brown-procedure
   ifelse hill?
     [ set color red
-      set pheromone-strength default-pheromone-strength
       rt 180 ]
-    [ set find-food-pheromone find-food-pheromone + pheromone-strength
+    [ if food <= 0
+        [ set find-food-pheromone find-food-pheromone + pheromone-strength ]
       if pheromone-strength > 0 
-        [ set pheromone-strength pheromone-strength - 1 ]
+        [ set pheromone-strength pheromone-strength - 3 ]
       if (find-hill-pheromone >= 0.05) and (find-hill-pheromone < 2)  
         [ follow-hill-pheromone ] ]
 end
 
-to look-for-food
+to red-procedure
   ifelse food > 0
     [ set color brown + 1
-      set pheromone-strength default-pheromone-strength
       set food food - 1
       rt 180
       stop ]
-    [ set find-hill-pheromone find-hill-pheromone + pheromone-strength
+    [ if not hill?
+        [ set find-hill-pheromone find-hill-pheromone + pheromone-strength ]
       if pheromone-strength > 0 
-        [ set pheromone-strength pheromone-strength - 1 ]
+        [ set pheromone-strength pheromone-strength - 3 ]
       if (find-food-pheromone >= 0.05) and (find-food-pheromone < 2)  
         [ follow-food-pheromone ] ]
 end
