@@ -1,10 +1,11 @@
 ;; Taken and modified from Uri Wilensky's 1997 Ant Colony Optimization NetLogo code.
 
 globals [
-  find-food-diffusion   ;; amount of diffusion for find-food-pheromone
-  find-food-evaporation ;; amount of evaporation for find-food-pheromone
-  find-hill-diffusion   ;; amount of diffusion for find-hill-pheromone
-  find-hill-evaporation ;; amount of evaporation for find-hill-pheromone
+  find-food-diffusion        ;; amount of diffusion for find-food-pheromone
+  find-food-evaporation      ;; amount of evaporation for find-food-pheromone
+  find-hill-diffusion        ;; amount of diffusion for find-hill-pheromone
+  find-hill-evaporation      ;; amount of evaporation for find-hill-pheromone
+  default-pheromone-strength ;; amount of default pheromone strength an ant will leave
 ]
 
 patches-own [
@@ -12,8 +13,11 @@ patches-own [
   find-hill-pheromone  ;; amount of find-hill-pheromone on this patch
   food                 ;; amount of food on this patch
   hill?                ;; true on hill patches, false elsewhere
-  hill-scent           ;; number that is higher closer to the hill
   food-source-number   ;; number (1, 2, 3, or 4) to identify the food sources
+]
+
+turtles-own [ 
+  pheromone-strength   ;; strength level of pheromones that an ant leaves at each spot, must be >= 0, decreases as they spend more time away from food/hill
 ]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -25,13 +29,15 @@ to setup
   set-default-shape turtles "bug"
   create-turtles population
   [ set size 2
-    set color red ]   ;; red = not carrying food and brown = carrying food
+    set color red               ;; red = not carrying food and brown = carrying food
+    set pheromone-strength 0 ]
   setup-patches
   ;; Change the diffusion and evaporation rates for everything HERE:
   set find-food-diffusion 20
   set find-food-evaporation 8
   set find-hill-diffusion 1
   set find-hill-evaporation 8
+  set default-pheromone-strength 60
   reset-ticks
 end
 
@@ -48,9 +54,6 @@ to setup-hill ;; make 2 set ant hills
 
   if (distancexy (0.9 * max-pxcor) (0.8 * max-pycor)) < 3
   [ set hill? true ]
-
-  ;; spread a hill-scent over the whole world -- stronger near the hill
-  set hill-scent 200 - distancexy (-0.9 * max-pxcor) (-0.8 * max-pycor)
 end
 
 to setup-food ;; make 4 set food sources
@@ -108,66 +111,67 @@ end
 
 to return-to-hill
   ifelse hill?
-    [ set color red ;; drop food and head out again
+    [ set color red
+      set pheromone-strength default-pheromone-strength
       rt 180 ]
-    [ set find-food-pheromone find-food-pheromone + 60  ;; drop some find-food-pheromone
-      uphill-hill-scent ]  ;; head toward the greatest value of hill-scent
+    [ set find-food-pheromone find-food-pheromone + pheromone-strength
+      if pheromone-strength > 0 
+        [ set pheromone-strength pheromone-strength - 1 ]
+      if (find-hill-pheromone >= 0.05) and (find-hill-pheromone < 2)  
+        [ follow-hill-pheromone ] ]
 end
 
 to look-for-food
   ifelse food > 0
-    [ set color brown + 1      ;; pick up food
-      set food food - 1        ;; and reduce the food source
-      rt 180                   ;; and turn around
+    [ set color brown + 1
+      set pheromone-strength default-pheromone-strength
+      set food food - 1
+      rt 180
       stop ]
-    ;; go in the direction where the find-food-pheromone smell is strongest
-    [ set find-hill-pheromone find-hill-pheromone + 60 ;; drop some find-hill-pheromone
+    [ set find-hill-pheromone find-hill-pheromone + pheromone-strength
+      if pheromone-strength > 0 
+        [ set pheromone-strength pheromone-strength - 1 ]
       if (find-food-pheromone >= 0.05) and (find-food-pheromone < 2)  
-        [ uphill-food-pheromone ] ]
+        [ follow-food-pheromone ] ]
 end
 
-;; sniff left and right, and go where the strongest smell is
-to uphill-food-pheromone  ;; turtle procedure
+to follow-food-pheromone
   let scent-ahead food-pheromone-scent-at-angle   0
-  let scent-right food-pheromone-scent-at-angle  45
-  let scent-left  food-pheromone-scent-at-angle -45
+  let scent-right food-pheromone-scent-at-angle  35
+  let scent-left  food-pheromone-scent-at-angle -35
   if (scent-right > scent-ahead) or (scent-left > scent-ahead)
     [ ifelse scent-right > scent-left
-      [ rt 45 ]
-      [ lt 45 ] ]
+      [ rt random 35 ]
+      [ lt random 35 ] ]
 end
 
-;; sniff left and right, and go where the strongest smell is
-to uphill-hill-scent
-  let scent-ahead hill-scent-at-angle   0
-  let scent-right hill-scent-at-angle  45
-  let scent-left  hill-scent-at-angle -45
+to follow-hill-pheromone
+  let scent-ahead hill-pheromone-scent-at-angle   0
+  let scent-right hill-pheromone-scent-at-angle  35
+  let scent-left  hill-pheromone-scent-at-angle -35
   if (scent-right > scent-ahead) or (scent-left > scent-ahead)
     [ ifelse scent-right > scent-left
-      [ rt 45 ]
-      [ lt 45 ] ]
+      [ rt random 35 ]
+      [ lt random 35 ] ]
 end
 
 to wiggle
   rt random 40
   lt random 40
-  if not can-move? 1 [ rt 180 ]
-end
-
-to-report hill-scent-at-angle [angle]
-  let p patch-right-and-ahead angle 1
-  if p = nobody [ report 0 ]
-  report [hill-scent] of p
+  if not can-move? 1
+    [ rt 180 ]
 end
 
 to-report food-pheromone-scent-at-angle [angle]
   let p patch-right-and-ahead angle 1
-  if p = nobody [ report 0 ]
+  if p = nobody
+    [ report 0 ]
   report [find-food-pheromone] of p
 end
 
 to-report hill-pheromone-scent-at-angle [angle]
   let p patch-right-and-ahead angle 1
-  if p = nobody [ report 0 ]
+  if p = nobody
+    [ report 0 ]
   report [find-hill-pheromone] of p
 end
