@@ -39,8 +39,8 @@ to setup
   setup-patches
   set find-food-diffusion 20
   set find-food-evaporation 8
-  set find-hill-diffusion 20
-  set find-hill-evaporation 8
+  set find-hill-diffusion 10
+  set find-hill-evaporation 1
   set default-pheromone-strength 60
   reset-ticks
 end
