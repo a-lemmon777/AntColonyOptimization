@@ -40,8 +40,8 @@ to setup
   set find-food-diffusion 20
   set find-food-evaporation 8
   set find-hill-diffusion 10
-  set find-hill-evaporation 1
-  set default-pheromone-strength 60
+  set find-hill-evaporation 2
+  set default-pheromone-strength 100
   reset-ticks
 end
 
@@ -58,10 +58,10 @@ end
 ;;; It will set up two hills hard-coded at the upper right and lower left corners of the board. It will set
 ;;; the hill? boolean as true on those spots.
 to setup-hill
-  if (distancexy (-0.9 * max-pxcor) (-0.8 * max-pycor)) < 3
+  if (distancexy (-0.35 * max-pxcor) (0.2 * max-pycor)) < 3
   [ set hill? true ]
 
-  if (distancexy (0.9 * max-pxcor) (0.8 * max-pycor)) < 3
+  if (distancexy (0.1 * max-pxcor) (-0.3 * max-pycor)) < 3
   [ set hill? true ]
 end
 
@@ -75,7 +75,7 @@ to setup-food ;; make 4 set food sources
   if (distancexy (0.4 * max-pxcor) (-0.9 * max-pycor)) < 3
   [ set food-source-number 2 ]
 
-  if (distancexy (0.2 * max-pxcor) (0.75 * max-pycor)) < 3
+  if (distancexy (0.8 * max-pxcor) (0.85 * max-pycor)) < 3
   [ set food-source-number 3 ]
 
   if (distancexy (-0.9 * max-pxcor) (0.7 * max-pycor)) < 3
@@ -99,8 +99,8 @@ to recolor-patch
       if food-source-number = 3 [ set pcolor blue ]
       if food-source-number = 4 [ set pcolor yellow ] ]
     [ ifelse find-hill-pheromone > find-food-pheromone
-      [ set pcolor scale-color green find-hill-pheromone 0.1 5 ]
-      [ set pcolor scale-color orange find-food-pheromone 0.1 2 ] ] ]
+      [ set pcolor scale-color green find-hill-pheromone 0.1 20 ]
+      [ set pcolor scale-color orange find-food-pheromone 0.1 20 ] ] ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -175,12 +175,12 @@ end
 ;;; direction to turn by seeing which of the three directions has the most pheromones.
 to follow-hill-pheromone
   let scent-ahead hill-pheromone-scent-at-angle   0
-  let scent-right hill-pheromone-scent-at-angle  35
-  let scent-left  hill-pheromone-scent-at-angle -35
+  let scent-right hill-pheromone-scent-at-angle  60
+  let scent-left  hill-pheromone-scent-at-angle -60
   if (scent-right > scent-ahead) or (scent-left > scent-ahead)
     [ ifelse scent-right > scent-left
-      [ rt random 35 ]
-      [ lt random 35 ] ]
+      [ rt random 60 ]
+      [ lt random 60 ] ]
 end
 
 
@@ -189,12 +189,12 @@ end
 ;;; direction to turn by seeing which of the three directions has the most pheromones.
 to follow-food-pheromone
   let scent-ahead food-pheromone-scent-at-angle   0
-  let scent-right food-pheromone-scent-at-angle  35
-  let scent-left  food-pheromone-scent-at-angle -35
+  let scent-right food-pheromone-scent-at-angle  45
+  let scent-left  food-pheromone-scent-at-angle -45
   if (scent-right > scent-ahead) or (scent-left > scent-ahead)
     [ ifelse scent-right > scent-left
-      [ rt random 35 ]
-      [ lt random 35 ] ]
+      [ rt random 45 ]
+      [ lt random 45 ] ]
 end
 
 ;;; hill-pheromone-scent-at-angle: angle
