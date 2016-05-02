@@ -1,7 +1,7 @@
 ;; Taken and modified from Uri Wilensky's 1997 Ant Colony Optimization NetLogo code.
 
 globals [
-  find-food-diffusion        ;; amount of diffusion for find-food-pheromone
+ ; find-food-diffusion        ;; amount of diffusion for find-food-pheromone
   find-food-evaporation      ;; amount of evaporation for find-food-pheromone
   find-hill-diffusion        ;; amount of diffusion for find-hill-pheromone
   find-hill-evaporation      ;; amount of evaporation for find-hill-pheromone
@@ -37,7 +37,7 @@ to setup
     set color red
     set pheromone-strength 0 ]
   setup-patches
-  set find-food-diffusion 20
+ ; set find-food-diffusion 20
   set find-food-evaporation 8
   set find-hill-diffusion 10
   set find-hill-evaporation 2
@@ -273,11 +273,11 @@ SLIDER
 106
 221
 139
-diffusion-rate
-diffusion-rate
+find-food-diffusion
+find-food-diffusion
 0.0
 99.0
-50
+94
 1.0
 1
 NIL
