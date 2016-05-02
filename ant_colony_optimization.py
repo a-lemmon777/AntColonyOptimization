@@ -100,7 +100,7 @@ to recolor-patch
       if food-source-number = 4 [ set pcolor yellow ] ]
     [ ifelse find-hill-pheromone > find-food-pheromone
       [ set pcolor scale-color green find-hill-pheromone 0.1 5 ]
-      [ set pcolor scale-color orange find-food-pheromone 0.1 5 ] ] ]
+      [ set pcolor scale-color orange find-food-pheromone 0.1 2 ] ] ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;
