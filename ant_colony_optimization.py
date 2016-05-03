@@ -33,9 +33,9 @@ to setup
   clear-all
   set-default-shape turtles "bug"
   create-turtles population
-  [ set size 2
-    set color red
-    set pheromone-strength 0 ]
+    [ set size 2
+      set color red
+      set pheromone-strength 0 ]
   setup-patches
   set find-food-diffusion 20
   set find-food-evaporation 8
@@ -49,9 +49,9 @@ end
 ;;; For each patch on the board, it will set up the hills, setup the food, and color the patches appropriately.
 to setup-patches
   ask patches
-  [ setup-hill
-    setup-food
-    recolor-patch ]
+    [ setup-hill
+      setup-food
+      recolor-patch ]
 end
 
 ;;; setup-hill
@@ -59,10 +59,10 @@ end
 ;;; the hill? boolean as true on those spots.
 to setup-hill
   if (distancexy (-0.35 * max-pxcor) (0.2 * max-pycor)) < 3
-  [ set hill? true ]
+    [ set hill? true ]
 
   if (distancexy (0.1 * max-pxcor) (-0.3 * max-pycor)) < 3
-  [ set hill? true ]
+    [ set hill? true ]
 end
 
 ;;; setup-food
@@ -70,19 +70,19 @@ end
 ;;; and gives certain amounts of food (1, 2, 3, 4, or 5) to each food source.
 to setup-food ;; make 4 set food sources
   if (distancexy (0.6 * max-pxcor) (-0.1 * max-pycor)) < 3
-  [ set food-source-number 1 ]
+    [ set food-source-number 1 ]
 
   if (distancexy (0.4 * max-pxcor) (-0.9 * max-pycor)) < 3
-  [ set food-source-number 2 ]
+    [ set food-source-number 2 ]
 
   if (distancexy (0.8 * max-pxcor) (0.85 * max-pycor)) < 3
-  [ set food-source-number 3 ]
+    [ set food-source-number 3 ]
 
   if (distancexy (-0.9 * max-pxcor) (0.7 * max-pycor)) < 3
-  [ set food-source-number 4 ]
+    [ set food-source-number 4 ]
 
   if food-source-number > 0
-  [ set food one-of [1 2 3 4 5] ]
+    [ set food one-of [1 2 3 4 5] ]
 end
 
 ;;; recolor-patch
@@ -92,15 +92,15 @@ end
 ;;; and the colors will scale to show the evaporation of the pheromones.
 to recolor-patch
   ifelse hill?
-  [ set pcolor violet ]
-  [ ifelse food > 0
-    [ if food-source-number = 1 [ set pcolor cyan ]
-      if food-source-number = 2 [ set pcolor magenta ]
-      if food-source-number = 3 [ set pcolor blue ]
-      if food-source-number = 4 [ set pcolor yellow ] ]
-    [ ifelse find-hill-pheromone > find-food-pheromone
-      [ set pcolor scale-color green find-hill-pheromone 0.1 20 ]
-      [ set pcolor scale-color orange find-food-pheromone 0.1 20 ] ] ]
+    [ set pcolor violet ]
+    [ ifelse food > 0
+      [ if food-source-number = 1 [ set pcolor cyan ]
+        if food-source-number = 2 [ set pcolor magenta ]
+        if food-source-number = 3 [ set pcolor blue ]
+        if food-source-number = 4 [ set pcolor yellow ] ]
+      [ ifelse find-hill-pheromone > find-food-pheromone
+        [ set pcolor scale-color green find-hill-pheromone 0.1 20 ]
+        [ set pcolor scale-color orange find-food-pheromone 0.1 20 ] ] ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;

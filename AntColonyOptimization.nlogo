@@ -1,13 +1,5 @@
 ;; Taken and modified from Uri Wilensky's 1997 Ant Colony Optimization NetLogo code.
 
-globals [
- ; find-food-diffusion        ;; amount of diffusion for find-food-pheromone
-  find-food-evaporation      ;; amount of evaporation for find-food-pheromone
-  find-hill-diffusion        ;; amount of diffusion for find-hill-pheromone
-  find-hill-evaporation      ;; amount of evaporation for find-hill-pheromone
-  default-pheromone-strength ;; amount of default pheromone strength an ant will leave
-]
-
 patches-own [
   find-food-pheromone  ;; amount of find-food-pheromone on this patch
   find-hill-pheromone  ;; amount of find-hill-pheromone on this patch
@@ -27,21 +19,15 @@ turtles-own [
 ;;; setup
 ;;; Will be run when the "setup" button is pressed. It will clear the entire board and make all of the ants with
 ;;; size 2, color red (red means not carrying food, while brown means carrying food), and an initial pheromone-strength
-;;; of 0. It will then set up all of the patches. Lastly it will set all of the global variables and reset all of the
-;;; ticks.
+;;; of 0. It will then set up all of the patches. Lastly it will reset all of the ticks.
 to setup
   clear-all
   set-default-shape turtles "bug"
   create-turtles population
-  [ set size 2
-    set color red
-    set pheromone-strength 0 ]
+    [ set size 2
+      set color red
+      set pheromone-strength 0 ]
   setup-patches
- ; set find-food-diffusion 20
-  set find-food-evaporation 8
-  set find-hill-diffusion 10
-  set find-hill-evaporation 2
-  set default-pheromone-strength 100
   reset-ticks
 end
 
@@ -49,18 +35,18 @@ end
 ;;; For each patch on the board, it will set up the hills, setup the food, and color the patches appropriately.
 to setup-patches
   ask patches
-  [ setup-hill
-    setup-food
-    recolor-patch ]
+    [ setup-hill
+      setup-food
+      recolor-patch ]
 end
 
 ;;; setup-hill
-;;; It will set up two hills hard-coded at the upper right and lower left corners of the board. It will set
-;;; the hill? boolean as true on those spots.
+;;; It will set up two hills hard-coded diagonally in the center of the board. It will set the hill? boolean as true
+;;; on those spots and false everywhere else.
 to setup-hill
   ifelse ((distancexy (-0.35 * max-pxcor) (0.2 * max-pycor)) < 3) or ((distancexy (0.1 * max-pxcor) (-0.3 * max-pycor)) < 3)
-  [ set hill? true ]
-  [ set hill? false ]
+    [ set hill? true ]
+    [ set hill? false ]
 end
 
 ;;; setup-food
@@ -68,19 +54,19 @@ end
 ;;; and gives certain amounts of food (1, 2, 3, 4, or 5) to each food source.
 to setup-food ;; make 4 set food sources
   if (distancexy (0.6 * max-pxcor) (-0.1 * max-pycor)) < 3
-  [ set food-source-number 1 ]
+    [ set food-source-number 1 ]
 
   if (distancexy (0.4 * max-pxcor) (-0.9 * max-pycor)) < 3
-  [ set food-source-number 2 ]
+    [ set food-source-number 2 ]
 
   if (distancexy (0.8 * max-pxcor) (0.85 * max-pycor)) < 3
-  [ set food-source-number 3 ]
+    [ set food-source-number 3 ]
 
   if (distancexy (-0.9 * max-pxcor) (0.7 * max-pycor)) < 3
-  [ set food-source-number 4 ]
+    [ set food-source-number 4 ]
 
   if food-source-number > 0
-  [ set food one-of [1 2 3 4 5] ]
+    [ set food one-of [1 2 3 4 5] ]
 end
 
 ;;; recolor-patch
@@ -90,15 +76,15 @@ end
 ;;; and the colors will scale to show the evaporation of the pheromones.
 to recolor-patch
   ifelse hill?
-  [ set pcolor violet ]
-  [ ifelse food > 0
-    [ if food-source-number = 1 [ set pcolor cyan ]
-      if food-source-number = 2 [ set pcolor magenta ]
-      if food-source-number = 3 [ set pcolor blue ]
-      if food-source-number = 4 [ set pcolor yellow ] ]
-    [ ifelse find-hill-pheromone > find-food-pheromone
-      [ set pcolor scale-color green find-hill-pheromone 0.1 20 ]
-      [ set pcolor scale-color orange find-food-pheromone 0.1 20 ] ] ]
+    [ set pcolor violet ]
+    [ ifelse food > 0
+      [ if food-source-number = 1 [ set pcolor cyan ]
+        if food-source-number = 2 [ set pcolor magenta ]
+        if food-source-number = 3 [ set pcolor blue ]
+        if food-source-number = 4 [ set pcolor yellow ] ]
+      [ ifelse find-hill-pheromone > find-food-pheromone
+        [ set pcolor scale-color green find-hill-pheromone 0.1 20 ]
+        [ set pcolor scale-color orange find-food-pheromone 0.1 20 ] ] ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -225,13 +211,13 @@ to wiggle
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-257
+512
 10
-764
-538
+1142
+661
 35
 35
-7.0
+8.7324
 1
 10
 1
@@ -252,10 +238,10 @@ ticks
 30.0
 
 BUTTON
-46
-71
-126
-104
+130
+16
+234
+49
 NIL
 setup
 NIL
@@ -268,41 +254,11 @@ NIL
 NIL
 1
 
-SLIDER
-31
-106
-221
-139
-find-food-diffusion
-find-food-diffusion
-0.0
-99.0
-94
-1.0
-1
-NIL
-HORIZONTAL
-
-SLIDER
-31
-141
-221
-174
-evaporation-rate
-evaporation-rate
-0.0
-99.0
-10
-1.0
-1
-NIL
-HORIZONTAL
-
 BUTTON
-136
-71
-211
-104
+300
+17
+403
+50
 NIL
 go
 T
@@ -316,25 +272,100 @@ NIL
 0
 
 SLIDER
-31
-36
-221
-69
+54
+59
+457
+92
 population
 population
-0.0
-200.0
-125
-1.0
+0
+200
+128
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+54
+141
+458
+174
+find-hill-diffusion
+find-hill-diffusion
+0
+20
+20
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+54
+100
+458
+133
+find-food-diffusion
+find-food-diffusion
+0
+20
+20
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+54
+182
+458
+215
+find-food-evaporation
+find-food-evaporation
+0
+10
+7
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+54
+222
+458
+255
+find-hill-evaporation
+find-hill-evaporation
+0
+10
+8
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+53
+266
+459
+299
+default-pheromone-strength
+default-pheromone-strength
+10
+100
+60
+1
 1
 NIL
 HORIZONTAL
 
 PLOT
-5
-197
-248
-476
+9
+310
+500
+657
 Food in each pile
 time
 food
@@ -346,10 +377,20 @@ true
 false
 "" ""
 PENS
-"food-in-pile1" 1.0 0 -11221820 true "" "plotxy ticks sum [food] of patches with [pcolor = cyan]"
-"food-in-pile2" 1.0 0 -5825686 true "" "plotxy ticks sum [food] of patches with [pcolor = magenta]"
-"food-in-pile3" 1.0 0 -13345367 true "" "plotxy ticks sum [food] of patches with [pcolor = blue]"
-"pen-3" 1.0 0 -1184463 true "" "plotxy ticks sum [food] of patches with [pcolor = yellow]"
+"Pile 1" 1.0 0 -11221820 true "" "plotxy ticks sum [food] of patches with [pcolor = cyan]"
+"Pile 2" 1.0 0 -5825686 true "" "plotxy ticks sum [food] of patches with [pcolor = magenta]"
+"Pile 3" 1.0 0 -13345367 true "" "plotxy ticks sum [food] of patches with [pcolor = blue]"
+"Pile 4" 1.0 0 -1184463 true "" "plotxy ticks sum [food] of patches with [pcolor = yellow]"
+
+TEXTBOX
+1151
+17
+1327
+359
+Use the sliders on the left to change the parameters. The lower the diffusion levels, the less the pheromones will spread. The lower the evaporation levels, the faster the pheromones will disappear. The higher the default pheromone strength, the more pheromones will be left behind. The chart on the bottom shows how much food remains in each food pile at every tick.
+15
+0.0
+0
 
 @#$#@#$#@
 ## WHAT IS IT?

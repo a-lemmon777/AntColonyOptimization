@@ -4,7 +4,9 @@ An implementation of the Ant Colony Optimization. There is an ant hill and vario
 
 ## Running Our Code
 
-We've been running this `.txt` code through [this website](http://www.netlogoweb.org/launch#http://www.netlogoweb.org/assets/modelslib/Sample%20Models/Biology/Ants.nlogo) by copy-pasting the text file into where this link says NetLogo Code, and then recompiling. This was the easiest way we found to run this, instead of somehow compiling it ourselves and then uploading a file.
+Go to [this website](https://ccl.northwestern.edu/netlogo/5.3.1/) to download NetLogo for your computer. Then, after you install everything, go to File -> Open -> `AntColonyOptimization.nlogo` to open our model.
+
+Or... you can run the `ant_colony_optimization.py` (although it isn't a Python file) through [this website](http://www.netlogoweb.org/launch#http://www.netlogoweb.org/assets/modelslib/Sample%20Models/Biology/Ants.nlogo) by copy-pasting the file into where this link says NetLogo Code, and then recompiling.
 
 ## Our Implementation of Ant Colony Optimization
 
