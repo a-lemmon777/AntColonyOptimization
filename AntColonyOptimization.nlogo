@@ -1,4 +1,6 @@
-;; Taken and modified from Uri Wilensky's 1997 Ant Colony Optimization NetLogo code.
+;; Code written by Aaron Lemmon and Emma Sax
+;; Code, interface, and info modified from Uri Wilensky's 1997 Ant Colony Optimization
+;; Used in the University of Minnesota Morris's CSci 4553
 
 patches-own [
   find-food-pheromone  ;; amount of find-food-pheromone on this patch
@@ -238,9 +240,9 @@ ticks
 30.0
 
 BUTTON
-130
+142
 16
-234
+247
 49
 NIL
 setup
@@ -255,10 +257,10 @@ NIL
 1
 
 BUTTON
-300
-17
-403
-50
+294
+16
+397
+49
 NIL
 go
 T
@@ -280,7 +282,7 @@ population
 population
 0
 200
-128
+125
 1
 1
 NIL
@@ -340,7 +342,7 @@ find-hill-evaporation
 find-hill-evaporation
 0
 10
-8
+7
 1
 1
 NIL
@@ -348,9 +350,9 @@ HORIZONTAL
 
 SLIDER
 53
-266
+264
 459
-299
+297
 default-pheromone-strength
 default-pheromone-strength
 10
@@ -366,7 +368,7 @@ PLOT
 310
 500
 657
-Food in each pile
+Food Amount per Food Pile
 time
 food
 0.0
@@ -382,16 +384,6 @@ PENS
 "Pile 3" 1.0 0 -13345367 true "" "plotxy ticks sum [food] of patches with [pcolor = blue]"
 "Pile 4" 1.0 0 -1184463 true "" "plotxy ticks sum [food] of patches with [pcolor = yellow]"
 
-TEXTBOX
-1151
-17
-1327
-359
-Use the sliders on the left to change the parameters. The lower the diffusion levels, the less the pheromones will spread. The lower the evaporation levels, the faster the pheromones will disappear. The higher the default pheromone strength, the more pheromones will be left behind. The chart on the bottom shows how much food remains in each food pile at every tick.
-15
-0.0
-0
-
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -399,33 +391,23 @@ In this project, a colony of ants forages for food. Though each ant follows a se
 
 ## HOW IT WORKS
 
-When an ant finds a piece of food, it carries the food back to the nest, dropping a chemical as it moves. When other ants "sniff" the chemical, they follow the chemical toward the food. As more ants carry food to the nest, they reinforce the chemical trail.
+When an ant finds a piece of food, it carries the food back to either ant hill, dropping a `find-food-pheromone` as it moves. When other ants "sniff" the `find-food-pheromone`, they follow it toward the food. As more ants carry food to the ant hill, they reinforce the pheromone trail.
+
+Similarly, when an ant walks over an ant hill, they drop a `find-hill-pheromone`. This pheromone can be used to help ants find their way back to the ant hill after they've collected food.
 
 ## HOW TO USE IT
 
-Click the SETUP button to set up the ant nest (in violet, at center) and three piles of food. Click the GO button to start the simulation. The chemical is shown in a green-to-white gradient.
+Click the SETUP button to set up the ant hills (in violet) and four piles of food. Click the GO button to start the simulation. The `find-food-pheromone` is shown in an orange-to-white gradient. The `find-hill-pheromone` is shown in a green-to-white gradient.
 
-The EVAPORATION-RATE slider controls the evaporation rate of the chemical. The DIFFUSION-RATE slider controls the diffusion rate of the chemical.
+Use the sliders on the left to change the parameters. The lower the FIND-FOOD-DIFFUSION and FIND-HILL-DIFFUSION levels, the less the pheromones will spread. The lower the FIND-FOOD-EVAPORATION and FIND-HILL-EVAPORATION levels, the faster the pheromones will disappear. The higher the DEFAULT-PHEROMONE-STRENGTH, the more pheromones will be left behind. The chart on the bottom shows how much food remains in each food pile at every tick.
 
-If you want to change the number of ants, move the POPULATION slider before pressing SETUP.
+If you want to change the number of ants, move the POPUALTION level higher or lower.
 
 ## THINGS TO NOTICE
 
-The ant colony generally exploits the food source in order, starting with the food closest to the nest, and finishing with the food most distant from the nest. It is more difficult for the ants to form a stable trail to the more distant food, since the chemical trail has more time to evaporate and diffuse before being reinforced.
+The ant colony generally exploits the food source in order, starting with the food closest to the center/ant hills, and finishing with the food most distant from the ant hill. It is more difficult for the ants to form a stable trail to the more distant food, since the pheromone trails have more time to evaporate and diffuse before being reinforced.
 
 Once the colony finishes collecting the closest food, the chemical trail to that food naturally disappears, freeing up ants to help collect the other food sources. The more distant food sources require a larger "critical number" of ants to form a stable trail.
-
-The consumption of the food is shown in a plot.  The line colors in the plot match the colors of the food piles.
-
-## EXTENDING THE MODEL
-
-Try different placements for the food sources. What happens if two food sources are equidistant from the nest? When that happens in the real world, ant colonies typically exploit one source then the other (not at the same time).
-
-In this project, the ants use a "trick" to find their way back to the nest: they follow the "nest scent." Real ants use a variety of different approaches to find their way back to the nest. Try to implement some alternative strategies.
-
-The ants only respond to chemical levels between 0.05 and 2.  The lower limit is used so the ants aren't infinitely sensitive.  Try removing the upper limit.  What happens?  Why?
-
-In the `uphill-chemical` procedure, the ant "follows the gradient" of the chemical. That is, it "sniffs" in three directions, then turns in the direction where the chemical is strongest. You might want to try variants of the `uphill-chemical` procedure, changing the number and placement of "ant sniffs."
 
 ## NETLOGO FEATURES
 
@@ -433,35 +415,9 @@ The built-in `diffuse` primitive lets us diffuse the chemical easily without com
 
 The primitive `patch-right-and-ahead` is used to make the ants smell in different directions without actually turning.
 
-## HOW TO CITE
+## WHERE THIS CODE CAME FROM
 
-If you mention this model or the NetLogo software in a publication, we ask that you include the citations below.
-
-For the model itself:
-
-* Wilensky, U. (1997).  NetLogo Ants model.  http://ccl.northwestern.edu/netlogo/models/Ants.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
-
-Please cite the NetLogo software as:
-
-* Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
-
-## COPYRIGHT AND LICENSE
-
-Copyright 1997 Uri Wilensky.
-
-![CC BY-NC-SA 3.0](http://ccl.northwestern.edu/images/creativecommons/byncsa.png)
-
-This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License.  To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
-
-Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
-
-This model was created as part of the project: CONNECTED MATHEMATICS: MAKING SENSE OF COMPLEX PHENOMENA THROUGH BUILDING OBJECT-BASED PARALLEL MODELS (OBPML).  The project gratefully acknowledges the support of the National Science Foundation (Applications of Advanced Technologies Program) -- grant numbers RED #9552950 and REC #9632612.
-
-This model was developed at the MIT Media Lab using CM StarLogo.  See Resnick, M. (1994) "Turtles, Termites and Traffic Jams: Explorations in Massively Parallel Microworlds."  Cambridge, MA: MIT Press.  Adapted to StarLogoT, 1997, as part of the Connected Mathematics Project.
-
-This model was converted to NetLogo as part of the projects: PARTICIPATORY SIMULATIONS: NETWORK-BASED DESIGN FOR SYSTEMS LEARNING IN CLASSROOMS and/or INTEGRATED SIMULATION AND MODELING ENVIRONMENT. The project gratefully acknowledges the support of the National Science Foundation (REPP & ROLE programs) -- grant numbers REC #9814682 and REC-0126227. Converted from StarLogoT to NetLogo, 1998.
-
-<!-- 1997 1998 MIT -->
+This code was originally written by Aaron Lemmon and Emma Sax, although it was modified from Uri Wilensky's 1997 Ant Colony Optimization version on NetLogo. It was designed for  the University of Minnesota Morris's CSci 4553.
 @#$#@#$#@
 default
 true
