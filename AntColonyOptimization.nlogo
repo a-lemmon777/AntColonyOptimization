@@ -2,6 +2,10 @@
 ;; Code, interface, and info modified from Uri Wilensky's 1997 Ant Colony Optimization
 ;; Used in the University of Minnesota Morris's CSci 4553
 
+globals [
+  food-counter
+]
+
 patches-own [
   find-food-pheromone  ;; amount of find-food-pheromone on this patch
   find-hill-pheromone  ;; amount of find-hill-pheromone on this patch
@@ -29,6 +33,7 @@ to setup
     [ set size 2
       set color red
       set pheromone-strength 0 ]
+  set food-counter 0
   setup-patches
   reset-ticks
 end
@@ -67,8 +72,12 @@ to setup-food ;; make 4 set food sources
   if (distancexy (-0.9 * max-pxcor) (0.7 * max-pycor)) < 3
     [ set food-source-number 4 ]
 
+  if (distancexy (-0.9 * max-pxcor) (-0.85 * max-pycor)) < 3
+    [ set food-source-number 5 ]
+
   if food-source-number > 0
-    [ set food one-of [1 2 3 4 5] ]
+    [ set food 4
+      set food-counter food-counter + 4 ]
 end
 
 ;;; recolor-patch
@@ -83,7 +92,8 @@ to recolor-patch
       [ if food-source-number = 1 [ set pcolor cyan ]
         if food-source-number = 2 [ set pcolor magenta ]
         if food-source-number = 3 [ set pcolor blue ]
-        if food-source-number = 4 [ set pcolor yellow ] ]
+        if food-source-number = 4 [ set pcolor yellow ]
+        if food-source-number = 5 [ set pcolor pink ] ]
       [ ifelse find-hill-pheromone > find-food-pheromone
         [ set pcolor scale-color green find-hill-pheromone 0.1 20 ]
         [ set pcolor scale-color orange find-food-pheromone 0.1 20 ] ] ]
@@ -103,8 +113,7 @@ end
 ;;; patch and recolor all of the patches. Lastly, tick.
 to go
   ask turtles
-    [ if who >= ticks [ stop ]
-      if hill? or (food > 0)
+    [ if hill? or (food > 0)
         [ set pheromone-strength default-pheromone-strength ]
       ifelse color = red
         [ food-procedure ]
@@ -118,6 +127,8 @@ to go
       set find-hill-pheromone find-hill-pheromone * (100 - find-hill-evaporation) / 100
       recolor-patch ]
   tick
+  if food-counter = 0
+    [ stop ]
 end
 
 ;;; hill-procedure
@@ -128,11 +139,13 @@ end
 to hill-procedure
   ifelse hill?
     [ set color red
+      set food-counter food-counter - 1
       rt 180 ]
     [ if food <= 0
         [ set find-food-pheromone find-food-pheromone + pheromone-strength ]
-      if pheromone-strength > 0
-        [ set pheromone-strength pheromone-strength - 3 ]
+      ifelse pheromone-strength >= food-pheromone-falloff
+        [ set pheromone-strength pheromone-strength - food-pheromone-falloff ]
+        [ set pheromone-strength 0 ]
       if (find-hill-pheromone >= 0.05) and (find-hill-pheromone < 2)
         [ follow-hill-pheromone ] ]
 end
@@ -150,8 +163,9 @@ to food-procedure
       stop ]
     [ if not hill?
         [ set find-hill-pheromone find-hill-pheromone + pheromone-strength ]
-      if pheromone-strength > 0
-        [ set pheromone-strength pheromone-strength - 3 ]
+      ifelse pheromone-strength >= hill-pheromone-falloff
+        [ set pheromone-strength pheromone-strength - hill-pheromone-falloff ]
+        [ set pheromone-strength 0 ]
       if (find-food-pheromone >= 0.05) and (find-food-pheromone < 2)
         [ follow-food-pheromone ] ]
 end
@@ -161,12 +175,12 @@ end
 ;;; direction to turn by seeing which of the three directions has the most pheromones.
 to follow-hill-pheromone
   let scent-ahead hill-pheromone-scent-at-angle   0
-  let scent-right hill-pheromone-scent-at-angle  60
-  let scent-left  hill-pheromone-scent-at-angle -60
+  let scent-right hill-pheromone-scent-at-angle  45
+  let scent-left  hill-pheromone-scent-at-angle -45
   if (scent-right > scent-ahead) or (scent-left > scent-ahead)
     [ ifelse scent-right > scent-left
-      [ rt random 60 ]
-      [ lt random 60 ] ]
+      [ rt 45 ]
+      [ lt 45 ] ]
 end
 
 
@@ -179,8 +193,8 @@ to follow-food-pheromone
   let scent-left  food-pheromone-scent-at-angle -45
   if (scent-right > scent-ahead) or (scent-left > scent-ahead)
     [ ifelse scent-right > scent-left
-      [ rt random 45 ]
-      [ lt random 45 ] ]
+      [ rt 45 ]
+      [ lt 45 ] ]
 end
 
 ;;; hill-pheromone-scent-at-angle: angle
@@ -215,11 +229,11 @@ end
 GRAPHICS-WINDOW
 512
 10
-1142
-661
+1228
+747
 35
 35
-8.7324
+9.944
 1
 10
 1
@@ -296,7 +310,7 @@ SLIDER
 find-hill-diffusion
 find-hill-diffusion
 0
-20
+40
 20
 1
 1
@@ -311,7 +325,7 @@ SLIDER
 find-food-diffusion
 find-food-diffusion
 0
-20
+40
 20
 1
 1
@@ -355,7 +369,7 @@ SLIDER
 297
 default-pheromone-strength
 default-pheromone-strength
-10
+0
 100
 60
 1
@@ -364,10 +378,10 @@ NIL
 HORIZONTAL
 
 PLOT
-9
-310
-500
-657
+12
+399
+503
+746
 Food Amount per Food Pile
 time
 food
@@ -383,6 +397,37 @@ PENS
 "Pile 2" 1.0 0 -5825686 true "" "plotxy ticks sum [food] of patches with [pcolor = magenta]"
 "Pile 3" 1.0 0 -13345367 true "" "plotxy ticks sum [food] of patches with [pcolor = blue]"
 "Pile 4" 1.0 0 -1184463 true "" "plotxy ticks sum [food] of patches with [pcolor = yellow]"
+"Pile 5" 1.0 0 -2064490 true "" "plotxy ticks sum [food] of patches with [pcolor = pink]"
+
+SLIDER
+53
+308
+459
+341
+food-pheromone-falloff
+food-pheromone-falloff
+0
+10
+3
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+53
+354
+460
+387
+hill-pheromone-falloff
+hill-pheromone-falloff
+0
+10
+3
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -397,21 +442,21 @@ Similarly, when an ant walks over an ant hill, they drop a `find-hill-pheromone`
 
 ## HOW TO USE IT
 
-Click the SETUP button to set up the ant hills (in violet) and four piles of food. Click the GO button to start the simulation. The `find-food-pheromone` is shown in an orange-to-white gradient. The `find-hill-pheromone` is shown in a green-to-white gradient.
+Click the SETUP button to set up the ant hills (in violet) and five piles of food. Click the GO button to start the simulation. The `find-food-pheromone` is shown in an orange-to-white gradient. The `find-hill-pheromone` is shown in a green-to-white gradient. The entire simulation will stop when all of the food has been collected and returned to an ant hill.
 
-Use the sliders on the left to change the parameters. The lower the FIND-FOOD-DIFFUSION and FIND-HILL-DIFFUSION levels, the less the pheromones will spread. The lower the FIND-FOOD-EVAPORATION and FIND-HILL-EVAPORATION levels, the faster the pheromones will disappear. The higher the DEFAULT-PHEROMONE-STRENGTH, the more pheromones will be left behind. The chart on the bottom shows how much food remains in each food pile at every tick.
+Use the sliders on the left to change the parameters. The lower the FIND-FOOD-DIFFUSION and FIND-HILL-DIFFUSION levels, the less the pheromones will spread. The lower the FIND-FOOD-EVAPORATION and FIND-HILL-EVAPORATION levels, the slower the pheromones will disappear. The higher the DEFAULT-PHEROMONE-STRENGTH, the more pheromones will be left behind. The chart on the bottom shows how much food remains in each food pile at every tick. FOOD-PHEROMONE-FALLOFF and HILL-PHEROMONE-FALLOFF determine how quickly the pheromone strength fades as an ant travels. The higher the number, the quicker the fade.
 
-If you want to change the number of ants, move the POPUALTION level higher or lower.
+If you want to change the number of ants, move the POPULATION level higher or lower.
 
 ## THINGS TO NOTICE
 
-The ant colony generally exploits the food source in order, starting with the food closest to the center/ant hills, and finishing with the food most distant from the ant hill. It is more difficult for the ants to form a stable trail to the more distant food, since the pheromone trails have more time to evaporate and diffuse before being reinforced.
+The ant colony generally exploits the food sources in order, starting with the food closest to the center/ant hills, and finishing with the food most distant from the ant hills. It is more difficult for the ants to form a stable trail to the more distant food, since the pheromone trails are more likely to evaporate before being reinforced.
 
-Once the colony finishes collecting the closest food, the chemical trail to that food naturally disappears, freeing up ants to help collect the other food sources. The more distant food sources require a larger "critical number" of ants to form a stable trail.
+Once the colony finishes collecting the closest food, the pheromone trail to that food naturally disappears, freeing up ants to help collect the other food sources. The more distant food sources require a larger "critical number" of ants to form a stable trail.
 
 ## NETLOGO FEATURES
 
-The built-in `diffuse` primitive lets us diffuse the chemical easily without complicated code.
+The built-in `diffuse` primitive allows us to diffuse the chemical easily without complicated code.
 
 The primitive `patch-right-and-ahead` is used to make the ants smell in different directions without actually turning.
 
