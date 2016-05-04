@@ -1,7 +1,10 @@
-## Analysis of our Ant Colony Optimization Problem
+# Analysis of our Ant Colony Optimization Problem
 
-* For this analysis, we will count time in ticks until all food has been collected and returned to an ant hill.
-** The population count of the ants was kept the same throughout the entire testing process at 125.
+Note: For this analysis, we will count time in ticks until all food has been collected and returned to an ant hill. Also, the population count of the ants was kept the same throughout the entire testing process at 125.
+
+More details about out test runs can be seen on this [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1rTsikyOYHbQl1uOJhZzLAHbG8j_v6kVKUMnNYH3bgdc/edit?usp=sharing).
+
+## Our Initial Runs
 
 The first thing we ran had no pheromones. All of the ants wandered randomly until all food was found and collected. Our average tick count was 5110. This is pretty slow.
 
@@ -22,7 +25,7 @@ This is improved from when there were no pheromones at all because now all of th
 
 From this, we ran a set of trials with each value above lowered and raised from the base configuration amount. The settings that caused "cloud-like" structures of pheromones around ant hills and food sources resulted in the best performance.
 
-#### What Worked and What Didn't
+## What Worked and What Didn't
 
 We found that generally, these clouds occur when there are high levels of diffusion on both pheromones, which allows the pheromones to spread out after they're released. When the diffusion levels are low, the paths become very narrow, which makes them more difficult to follow. However, when there are high levels of diffusion, it's important that we maintain falloff levels (will be explained below).
 
@@ -32,7 +35,7 @@ As an ant moves away from an ant hill or food source, the amount of pheromones i
 
 `default-pheromone-strength` refers to how many pheromones an ant leaves when it has _just_ been to an ant hill or food source. We found that the best value here was also somewhere in the middle. If the level is very low, the performance decreases because the clouds aren't big enough to follow. If the level is high, the performance also decreases because there are too many pheromones, and the clouds are too large.
 
-#### The Ultimate Best and Worst
+## The Ultimate Best and Worst Configurations
 
 Using all of this, the worst configuration we found was:
 
@@ -64,4 +67,4 @@ average tick count:         1486
 
 Here, we raised the diffusion level of the hill pheromone, making it easier for ants to find their way back to ant hills. We also lowered the hill falloff level, allowing larger clouds to gather near ant hills. We raised the food falloff level; this makes the clouds a little smaller, but there are so many food sources that the ants don't need the extra help finding food. Lastly, we lowered the evaporation rates so that the pheromones would stick around a little longer, allowing more ants to follow the trails.
 
-#### Conclusion
+## Conclusion
