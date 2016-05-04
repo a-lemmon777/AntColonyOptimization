@@ -341,7 +341,7 @@ find-food-evaporation
 find-food-evaporation
 0
 20
-16
+2
 1
 1
 NIL
@@ -356,7 +356,7 @@ find-hill-evaporation
 find-hill-evaporation
 0
 20
-16
+7
 1
 1
 NIL
@@ -371,7 +371,7 @@ default-pheromone-strength
 default-pheromone-strength
 0
 100
-10
+60
 1
 1
 NIL
@@ -408,7 +408,7 @@ food-pheromone-falloff
 food-pheromone-falloff
 0
 10
-1
+3
 1
 1
 NIL
@@ -423,7 +423,7 @@ hill-pheromone-falloff
 hill-pheromone-falloff
 0
 10
-1
+3
 1
 1
 NIL
@@ -444,9 +444,9 @@ Similarly, when an ant walks over an ant hill, they drop a `find-hill-pheromone`
 
 Click the SETUP button to set up the ant hills (in violet) and five piles of food. Click the GO button to start the simulation. The `find-food-pheromone` is shown in an orange-to-white gradient. The `find-hill-pheromone` is shown in a green-to-white gradient. The entire simulation will stop when all of the food has been collected and returned to an ant hill.
 
-Use the sliders on the left to change the parameters. The lower the FIND-FOOD-DIFFUSION and FIND-HILL-DIFFUSION levels, the less the pheromones will spread. The lower the FIND-FOOD-EVAPORATION and FIND-HILL-EVAPORATION levels, the slower the pheromones will disappear. The higher the DEFAULT-PHEROMONE-STRENGTH, the more pheromones will be left behind. The chart on the bottom shows how much food remains in each food pile at every tick. FOOD-PHEROMONE-FALLOFF and HILL-PHEROMONE-FALLOFF determine how quickly the pheromone strength fades as an ant travels. The higher the number, the quicker the fade.
+Use the sliders on the left to change the parameters. The lower the FIND-FOOD-DIFFUSION and FIND-HILL-DIFFUSION levels, the less the pheromones will spread. The lower the FIND-FOOD-EVAPORATION and FIND-HILL-EVAPORATION levels, the slower the pheromones will disappear. FOOD-PHEROMONE-FALLOFF and HILL-PHEROMONE-FALLOFF determine how quickly the pheromone strength fades as an ant travels. The higher the number, the quicker the fade.
 
-If you want to change the number of ants, move the POPULATION level higher or lower.
+The higher the DEFAULT-PHEROMONE-STRENGTH, the more pheromones will be left behind. The chart on the bottom shows how much food remains in each food pile at every tick. To change the number of ants, move the POPULATION level higher or lower.
 
 ## THINGS TO NOTICE
 
