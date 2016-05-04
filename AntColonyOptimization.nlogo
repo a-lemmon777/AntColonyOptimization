@@ -340,8 +340,8 @@ SLIDER
 find-food-evaporation
 find-food-evaporation
 0
-10
-7
+20
+16
 1
 1
 NIL
@@ -355,23 +355,23 @@ SLIDER
 find-hill-evaporation
 find-hill-evaporation
 0
-10
-7
+20
+16
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-53
-264
-459
-297
+54
+349
+460
+382
 default-pheromone-strength
 default-pheromone-strength
 0
 100
-60
+10
 1
 1
 NIL
@@ -401,14 +401,14 @@ PENS
 
 SLIDER
 53
-308
+264
 459
-341
+297
 food-pheromone-falloff
 food-pheromone-falloff
 0
 10
-3
+1
 1
 1
 NIL
@@ -416,14 +416,14 @@ HORIZONTAL
 
 SLIDER
 53
-354
+306
 460
-387
+339
 hill-pheromone-falloff
 hill-pheromone-falloff
 0
 10
-3
+1
 1
 1
 NIL
