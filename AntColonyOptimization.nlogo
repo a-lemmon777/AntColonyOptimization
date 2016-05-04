@@ -341,7 +341,7 @@ find-food-evaporation
 find-food-evaporation
 0
 20
-2
+7
 1
 1
 NIL

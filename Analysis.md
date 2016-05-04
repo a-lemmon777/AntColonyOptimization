@@ -68,3 +68,9 @@ average tick count:         1486
 Here, we raised the diffusion level of the hill pheromone, making it easier for ants to find their way back to ant hills. We also lowered the hill falloff level, allowing larger clouds to gather near ant hills. We raised the food falloff level; this makes the clouds a little smaller, but there are so many food sources that the ants don't need the extra help finding food. Lastly, we lowered the evaporation rates so that the pheromones would stick around a little longer, allowing more ants to follow the trails.
 
 ## Conclusion
+
+In general, we found that `find-hill-pheromone` is more critical than `find-food-pheromone`. If need be, ants can sort of stumble upon food sources randomly, but the ants really need `find-hill-pheromone` to bring the food back. This could be because we have five food sources, but only two ant hills.
+
+Overall, using pheromones to guide ants improves performance over having no pheromones at all. However, proper pheromone configuration plays a large role in the performance improvements. Configured incorrectly, having pheromones can actually cause much worse performance than having no pheromones. Badly configured pheromones can cause the ants to blindly follow each other around rather than searching for food and bringing it back to the hill.
+
+
