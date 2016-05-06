@@ -91,7 +91,7 @@ to recolor-patch
     [ ifelse food > 0
       [ if food-source-number = 1 [ set pcolor cyan ]
         if food-source-number = 2 [ set pcolor magenta ]
-        if food-source-number = 3 [ set pcolor blue ]
+        if food-source-number = 3 [ set pcolor brown ]
         if food-source-number = 4 [ set pcolor yellow ]
         if food-source-number = 5 [ set pcolor pink ] ]
       [ ifelse find-hill-pheromone > find-food-pheromone
@@ -157,7 +157,7 @@ end
 ;;; find-food-pheromone and move.
 to food-procedure
   ifelse food > 0
-    [ set color brown + 1
+    [ set color blue + 1
       set food food - 1
       rt 180
       stop ]

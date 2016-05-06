@@ -82,5 +82,3 @@ Here, we raised the diffusion level of the hill pheromone, making it easier for 
 In general, we found that `find-hill-pheromone` is more critical than `find-food-pheromone`. If need be, ants can sort of stumble upon food sources randomly, but the ants really need `find-hill-pheromone` to bring the food back. This could be because we have five food sources, but only two ant hills.
 
 Overall, using pheromones to guide ants improves performance over having no pheromones at all. However, proper pheromone configuration plays a large role in the performance improvements. Configured incorrectly, having pheromones can actually cause much worse performance than having no pheromones. Badly configured pheromones can cause the ants to blindly follow each other around rather than searching for food and bringing it back to the hill.
-
-
